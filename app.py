@@ -5,7 +5,7 @@ from typing import Generator
 from groq import Groq
 
 _ = load_dotenv(find_dotenv())
-st.set_page_config(page_icon="📃", layout="wide", page_title="LLaMA3 Chat Bot...")
+st.set_page_config(page_icon="📃", layout="wide", page_title="IA Chat Bot...")
 
 
 def icon(emoji: str):
@@ -17,8 +17,6 @@ def icon(emoji: str):
 
 
 # icon("⚡️")
-
-st.subheader("Chat Llama 3", divider="rainbow", anchor=False)
 
 client = Groq(
     api_key=os.environ['GROQ_API_KEY'],
