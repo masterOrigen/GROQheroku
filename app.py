@@ -34,7 +34,7 @@ def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
 if not st.session_state.messages:
     initial_message = "Bienvenido, cuéntame que información detallada necesitas que busque y filtre para ti en internet?"
     st.session_state.messages.append({"role": "assistant", "content": initial_message})
-    st.markdown(f"**Brainstorm:** {initial_message}")
+   
 
 if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
