@@ -19,11 +19,28 @@ if "messages" not in st.session_state:
 model = "llama3-70b-8192"
 max_tokens = 8192  # Maximum tokens for LLaMA3-70b
 
+# Custom function to display avatar
+def display_avatar(avatar_url: str, size: int = 50):
+    return st.image(avatar_url, width=size)
+
+# Function to create a chat message with custom avatar
+def custom_chat_message(role: str, content: str, avatar_url: str = None):
+    with st.chat_message(role):
+        if avatar_url:
+            col1, col2 = st.columns([1, 9])
+            with col1:
+                display_avatar(avatar_url)
+            with col2:
+                st.markdown(content)
+        else:
+            st.markdown(content)
+
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
-    avatar = "🔋" if message["role"] == "assistant" else "🧑‍💻"
-    with st.chat_message(message["role"], avatar=avatar):
-        st.markdown(message["content"])
+    if message["role"] == "assistant":
+        custom_chat_message(message["role"], message["content"], "https://brainstorm.origenmedios.cl/wp-content/uploads/2024/09/favicoBrainstormOK2.png")
+    else:
+        custom_chat_message(message["role"], message["content"])
 
 def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
     """Yield chat response content from the Groq API response."""
@@ -35,14 +52,11 @@ def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
 if not st.session_state.messages:
     initial_message = "Bienvenido, cuéntame que información detallada necesitas que busque y filtre para ti en internet?"
     st.session_state.messages.append({"role": "assistant", "content": initial_message})
-    with st.chat_message("assistant", avatar="🔋"):
-        st.markdown(initial_message)
+    custom_chat_message("assistant", initial_message, "https://brainstorm.origenmedios.cl/wp-content/uploads/2024/09/favicoBrainstormOK2.png")
 
 if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-
-    with st.chat_message("user", avatar="🧑‍💻"):  
-        st.markdown(prompt)
+    custom_chat_message("user", prompt)
 
     # Fetch response from Groq API
     try:
@@ -57,9 +71,13 @@ if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
         )
 
         # Use the generator function with st.write_stream
-        with st.chat_message("assistant", avatar="🔋"):
-            chat_responses_generator = generate_chat_responses(chat_completion)
-            full_response = st.write_stream(chat_responses_generator)
+        with st.chat_message("assistant"):
+            col1, col2 = st.columns([1, 9])
+            with col1:
+                display_avatar("https://brainstorm.origenmedios.cl/wp-content/uploads/2024/09/favicoBrainstormOK2.png")
+            with col2:
+                chat_responses_generator = generate_chat_responses(chat_completion)
+                full_response = st.write_stream(chat_responses_generator)
     except Exception as e:
         st.error(e, icon="❌")
 
