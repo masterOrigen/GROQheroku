@@ -21,8 +21,12 @@ max_tokens = 8192  # Maximum tokens for LLaMA3-70b
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
-    role = "Usuario" if message['role'] == "user" else "Brainstorm"
-    st.markdown(f"**{role}:** {message['content']}")
+    if message['role'] == "user":
+        st.markdown(f"**Usuario:** {message['content']}")
+    elif message['role'] == "assistant" and message != st.session_state.messages[0]:
+        st.markdown(f"**Brainstorm:** {message['content']}")
+    else:
+        st.markdown(message['content'])
 
 def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
     """Yield chat response content from the Groq API response."""
@@ -34,7 +38,7 @@ def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
 if not st.session_state.messages:
     initial_message = "Bienvenido, cuéntame que información detallada necesitas que busque y filtre para ti en internet?"
     st.session_state.messages.append({"role": "assistant", "content": initial_message})
-   
+    st.markdown(initial_message)
 
 if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
