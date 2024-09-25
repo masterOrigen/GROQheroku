@@ -21,7 +21,8 @@ max_tokens = 8192  # Maximum tokens for LLaMA3-70b
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
-    st.markdown(f"**{message['role'].capitalize()}:** {message['content']}")
+    role = "Usuario" if message['role'] == "user" else "Brainstorm"
+    st.markdown(f"**{role}:** {message['content']}")
 
 def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
     """Yield chat response content from the Groq API response."""
@@ -33,11 +34,11 @@ def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
 if not st.session_state.messages:
     initial_message = "Bienvenido, cuéntame que información detallada necesitas que busque y filtre para ti en internet?"
     st.session_state.messages.append({"role": "assistant", "content": initial_message})
-    st.markdown(f"**Assistant:** {initial_message}")
+    st.markdown(f"**Brainstorm:** {initial_message}")
 
 if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    st.markdown(f"**User:** {prompt}")
+    st.markdown(f"**Usuario:** {prompt}")
 
     # Fetch response from Groq API
     try:
@@ -52,7 +53,7 @@ if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
         )
 
         # Use the generator function with st.write_stream
-        st.markdown("**Assistant:**")
+        st.markdown("**Brainstorm:**")
         chat_responses_generator = generate_chat_responses(chat_completion)
         full_response = st.write_stream(chat_responses_generator)
     except Exception as e:
