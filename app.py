@@ -34,8 +34,7 @@ def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
 if not st.session_state.messages:
     initial_message = "Bienvenido, cuéntame que información detallada necesitas que busque y filtre para ti en internet?"
     st.session_state.messages.append({"role": "assistant", "content": initial_message})
-    with st.chat_message("assistant"):
-        st.markdown(initial_message)
+    st.markdown(initial_message)
 
 if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -59,7 +58,7 @@ if prompt := st.chat_input("Ingresa tu pregunta aquí..."):
             chat_responses_generator = generate_chat_responses(chat_completion)
             full_response = st.write_stream(chat_responses_generator)
     except Exception as e:
-        st.error(e, icon="❌")
+        st.error(str(e), icon=None)
 
     # Append the full response to session_state.messages
     if isinstance(full_response, str):
